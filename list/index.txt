@@ -1,0 +1,5 @@
+/home/anhtu/Desktop/places365/docker/images/coast.jpg
+/home/anhtu/Desktop/places365/docker/images/mountains.jpg
+/home/anhtu/Desktop/places365/docker/images/unknow.jpg
+/home/anhtu/Desktop/places365/docker/images/waterfall.jpg
+/home/anhtu/Desktop/places365/docker/images/1433.jpg
