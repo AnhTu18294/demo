@@ -1,0 +1,9 @@
+/home/anhtu/Desktop/places365/docker/images/678.jpg
+/home/anhtu/Desktop/places365/docker/images/713.jpg
+/home/anhtu/Desktop/places365/docker/images/969.jpg
+/home/anhtu/Desktop/places365/docker/images/1925.jpg
+/home/anhtu/Desktop/places365/docker/images/1934.jpg
+/home/anhtu/Desktop/places365/docker/images/2148.jpg
+/home/anhtu/Desktop/places365/docker/images/2321.jpg
+/home/anhtu/Desktop/places365/docker/images/3262.jpg
+/home/anhtu/Desktop/places365/docker/images/3368.jpg
