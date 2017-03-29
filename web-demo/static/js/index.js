@@ -116,12 +116,12 @@ $(document).ready(function() {
     }
 
     var generate_image_html_string = function(image, collection){
-        res = '<div class="col-sm-3 col-lg-3 col-md-3">'+
+        res = '<div class="col-sm-2 col-lg-2 col-md-2">'+
                     '<div class="thumbnail">'+
                         '<img src="/images?path='+ collection + '/JPG/images/' + image.name + '" alt="">'+
                         '<div class="caption">'+
                             '<meter style="100px" max="1" low="0" high="0.75" optimum="0.9" value="' + (parseFloat(image.prob).toFixed(4)) + '"></meter>'+
-                            '<span>'+ (parseFloat(image.prob).toFixed(4)) + '</span>' +
+                            '<span> '+ (parseFloat(image.prob).toFixed(4)) + '</span>' +
                         '</div>'+
                     '</div>'+
                 '</div>'

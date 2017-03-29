@@ -2,6 +2,7 @@ import web
 import os
 import json
 import numpy as np
+import struct
 
 def get_collections_dir_name():
     path_to_app = os.path.abspath(os.path.dirname(__file__))
@@ -74,7 +75,7 @@ class Category:
         collection = request_data.collection
         dataset = request_data.dataset
         categories_file = collections_dir_name + collection + '/data/' + dataset + '/categories.txt'
-        print categories_file
+
         try:
             fin = open(categories_file, 'r')
         except:
@@ -177,39 +178,31 @@ def sort_image_with_sublist(category, path_to_keyfile, path_to_list_image_file, 
     categories = read_categories(f_categoryfile)
 
     # get numerical order follow keylist file
-    image_list = {}
+    number_of_category = len(categories)
+    size_of_float = 4
+
+    prob_image_list_values = []
+
+    image_list_name = []
     image_key = f_listimage.readline().replace('\n', '')
     while image_key:
         try:
-            image_list[keylist_dict[image_key]] = image_key
+            image_position = keylist_dict[image_key]
         except:
             print "ERROR: The image not exists at line : ", image_key
             sys.exit()
+
+        offset = (number_of_category*image_position + category)*4
+        f_binaryfile.seek(offset)
+        temp = f_binaryfile.read(4)
+        prob_image_list_values.append(struct.unpack('<f', temp)[0])
+        image_list_name.append(image_key)
         image_key = f_listimage.readline().replace('\n', '')
-
-    key_array_image_list = image_list.keys()
-    # read probabilities values for category selected that coressponse with each images
-    number_of_category = len(categories)
-    size_of_float = 4
-    number_byte_each_image = number_of_category*size_of_float
-    prob_image_list_values = []
-    i = 0
-    j = 0
-    buff_image_probs = f_binaryfile.read(number_byte_each_image)
-    while buff_image_probs:
-        if(i == key_array_image_list[j]):
-            float_array = np.frombuffer(buff_image_probs, dtype='<f', count = -1, offset = 0)
-            prob_image_list_values.append(float_array[category])
-            j += 1
-            if(j == len(key_array_image_list)):
-                break
-        i += 1
-        buff_image_probs = f_binaryfile.read(number_byte_each_image)
-
+        
     prob_image_list_values = np.asarray(prob_image_list_values) 
     argsort = prob_image_list_values.argsort()[::-1]
     for i in range(0, len(argsort)):
-        res.append({"name": image_list[key_array_image_list[argsort[i]]], "prob": str(prob_image_list_values[argsort[i]])})
+        res.append({"name": image_list_name[argsort[i]], "prob": str(prob_image_list_values[argsort[i]])})
     
     return res
 
