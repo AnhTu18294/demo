@@ -2,8 +2,39 @@
 $(document).ready(function() {
     var $select_collection = $('#select-collection')
     var $select_list = $('#select-list')
+    var $select_dataset = $('#select-dataset')
     var $select_category = $('#select-category')
     var $select_binary_file = $('#select-binary-file')
+    var $start_number = $("#start-number")
+    var $end_number = $("#end-number")
+    var $image_res = $('#image-res')
+    var $search_btn = $('#search-btn')
+    var $error = $('#error')
+
+    // init select 2
+    var init = function() {
+        $select_list.empty().append("<option></option>").select2({
+            placeholder: "Select a list",
+            disabled: true
+        })
+
+        $select_dataset.empty().append("<option></option>").select2({
+            placeholder: "Select a dataset",
+            disabled: true
+        })
+
+        $select_category.empty().append("<option></option>").select2({
+            placeholder: "Select a category",
+            disabled: true
+        })
+
+        $select_binary_file.empty().append("<option></option>").select2({
+            placeholder: "Select a binary file",
+            disabled: true
+        })
+    }
+
+    init()
 
     var init_select_list = function(data) {
         $select_list.empty().append("<option></option>").select2({
@@ -29,27 +60,16 @@ $(document).ready(function() {
         })
     }
 
-    var init_select_collection = function(data) {
-        $select_collection.select2({
-            placeholder: "Select a collection",
-            data: data
+    var init_select_dataset = function(data) {
+        $select_dataset.empty().append("<option></option>").select2({
+            placeholder: "Select a dataset",
+            data: data,
+            disabled: false
         }).on("change", function(e) {
+            var dataset = $select_dataset.val()
             var collection = $select_collection.val()
             $.ajax({
-                url: "/list?collection=" + collection,
-                type: "GET",
-                success: function(data) {
-                    data = JSON.parse(data)
-                    var temp = []
-                    for (var i = 0; i < data.length; i++) {
-                        temp.push({ id: data[i], text: data[i] })
-                    }
-                    init_select_list(temp)
-                }
-            })
-
-            $.ajax({
-                url: "/categories?collection=" + collection,
+                url: "/categories?collection=" + collection + '&dataset=' + dataset,
                 type: "GET",
                 success: function(data) {
                     data = JSON.parse(data)
@@ -58,16 +78,106 @@ $(document).ready(function() {
             })
 
             $.ajax({
-                url: "/binaryfile?collection=" + collection,
+                url: "/binaryfile?collection=" + collection + '&dataset=' + dataset,
                 type: "GET",
                 success: function(data) {
                     data = JSON.parse(data)
                     init_select_binary_file(data)
                 }
             })
-
         })
     }
+
+    var init_select_collection = function(data) {
+        $select_collection.select2({
+            placeholder: "Select a collection",
+            data: data
+        }).on("change", function(e) {
+            init()
+            var collection = $select_collection.val()
+            $.ajax({
+                url: "/list?collection=" + collection,
+                type: "GET",
+                success: function(data) {
+                    data = JSON.parse(data)
+                    init_select_list(data)
+                }
+            })
+
+            $.ajax({
+                url: "/dataset?collection=" + collection,
+                type: "GET",
+                success: function(data) {
+                    data = JSON.parse(data)
+                    init_select_dataset(data)
+                }
+            })
+        })
+    }
+
+    var generate_image_html_string = function(image, collection){
+        res = '<div class="col-sm-3 col-lg-3 col-md-3">'+
+                    '<div class="thumbnail">'+
+                        '<img src="/images?path='+ collection + '/JPG/images/' + image.name + '" alt="">'+
+                        '<div class="caption">'+
+                            '<meter style="100px" max="1" low="0" high="0.75" optimum="0.9" value="' + (parseFloat(image.prob).toFixed(4)) + '"></meter>'+
+                            '<span>'+ (parseFloat(image.prob).toFixed(4)) + '</span>' +
+                        '</div>'+
+                    '</div>'+
+                '</div>'
+        return res
+    }
+
+    $search_btn.on("click", function(e) {
+
+        var error_html_string = ''
+
+        var collection = $select_collection.val()
+        if (collection == '') {
+            error_html_string += '<li>' + 'Collection must be selected!' + '</li>'
+        }
+        var u_list = $select_list.val()
+        if (u_list == '') {
+            error_html_string += '<li>' + 'List must be selected!' + '</li>'
+        }
+        var dataset = $select_dataset.val()
+        if (dataset == '') {
+            error_html_string += '<li>' + 'Dataset must be selected!' + '</li>'
+        }
+        var category = $select_category.val()
+        if (category == '') {
+            error_html_string += '<li>' + 'Category must be selected!' + '</li>'
+        }
+        var binaryfile = $select_binary_file.val()
+        if (binaryfile == '') {
+            error_html_string += '<li>' + 'Binary file must be selected!' + '</li>'
+        }
+
+        if (error_html_string != '') {
+            $error.empty().append(error_html_string)
+            $error.parent().removeClass("hidden")
+            return
+        }
+
+        $error.parent().addClass("hidden")
+
+        var url = '/search?' + 'collection=' + collection + '&list=' + u_list + '&dataset=' + dataset + '&category=' + category + '&binaryfile=' + binaryfile
+        console.log(url)
+        $.ajax({
+            url: url,
+            type: "GET",
+            success: function(data) {
+                data = JSON.parse(data)
+                $image_res.empty()
+                // generate images elements
+                var html_string = ''
+                for(var i = 0, len = data.length; i < len; i++){
+                    html_string += generate_image_html_string(data[i], collection)
+                }
+                $image_res.append(html_string)
+            },
+        });
+    })
 
     $.ajax({
         url: "/collections",
@@ -80,25 +190,7 @@ $(document).ready(function() {
             }
 
             init_select_collection(temp)
-
-            $select_category.select2({
-                placeholder: "Select a category",
-                disabled: true
-            })
-
-            $select_list.select2({
-                placeholder: "Select a list",
-                disabled: true
-            })
-
-            $select_binary_file.select2({
-                placeholder: "Select a binary file",
-                disabled: true
-            })
         },
     });
 
-
-
-    // console.log($select_collection)
-})
+});
