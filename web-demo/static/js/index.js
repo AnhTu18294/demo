@@ -118,7 +118,7 @@ $(document).ready(function() {
     var generate_image_html_string = function(image, collection){
         res = '<div class="col-sm-2 col-lg-2 col-md-2">'+
                     '<div class="thumbnail">'+
-                        '<img src="/images?path='+ collection + '/JPG/images/' + image.name + '" alt="">'+
+                        '<img class="lazy" data-original="/images?path=' + collection + '/JPG/images/' + image.name + '" alt="">'+
                         '<div class="caption">'+
                             '<meter style="100px" max="1" low="0" high="0.75" optimum="0.9" value="' + (parseFloat(image.prob).toFixed(4)) + '"></meter>'+
                             '<span> '+ (parseFloat(image.prob).toFixed(4)) + '</span>' +
@@ -175,6 +175,9 @@ $(document).ready(function() {
                     html_string += generate_image_html_string(data[i], collection)
                 }
                 $image_res.append(html_string)
+                $("img.lazy").lazyload({
+                    threshold: 200
+                });
             },
         });
     })
