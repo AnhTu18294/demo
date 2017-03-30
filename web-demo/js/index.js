@@ -69,8 +69,13 @@ $(document).ready(function() {
             var dataset = $select_dataset.val()
             var collection = $select_collection.val()
             $.ajax({
-                url: "/categories?collection=" + collection + '&dataset=' + dataset,
-                type: "GET",
+                url: "middleman.php",
+                type: "POST",
+                data: {
+                    type: 0,
+                    func: 3,
+                    params: collection + ',' + dataset
+                },
                 success: function(data) {
                     data = JSON.parse(data)
                     init_select_category(data)
@@ -78,8 +83,13 @@ $(document).ready(function() {
             })
 
             $.ajax({
-                url: "/binaryfile?collection=" + collection + '&dataset=' + dataset,
-                type: "GET",
+                url: "middleman.php",
+                type: "POST",
+                data: {
+                    type: 0,
+                    func: 4,
+                    params: collection + ',' + dataset
+                },
                 success: function(data) {
                     data = JSON.parse(data)
                     init_select_binary_file(data)
@@ -96,8 +106,13 @@ $(document).ready(function() {
             init()
             var collection = $select_collection.val()
             $.ajax({
-                url: "/list?collection=" + collection,
-                type: "GET",
+                url: "middleman.php",
+                type: "POST",
+                data: {
+                    type: 0,
+                    func: 1,
+                    params: collection
+                },
                 success: function(data) {
                     data = JSON.parse(data)
                     init_select_list(data)
@@ -105,8 +120,13 @@ $(document).ready(function() {
             })
 
             $.ajax({
-                url: "/dataset?collection=" + collection,
-                type: "GET",
+                url: "middleman.php",
+                type: "POST",
+                data: {
+                    type: 0,
+                    func: 2,
+                    params: collection
+                },
                 success: function(data) {
                     data = JSON.parse(data)
                     init_select_dataset(data)
@@ -115,16 +135,18 @@ $(document).ready(function() {
         })
     }
 
-    var generate_image_html_string = function(image, collection){
-        res = '<div class="col-sm-2 col-lg-2 col-md-2">'+
-                    '<div class="thumbnail">'+
-                        '<img class="lazy" data-original="/images?path=' + collection + '/JPG/images/' + image.name + '" alt="">'+
-                        '<div class="caption">'+
-                            '<meter style="100px" max="1" low="0" high="0.75" optimum="0.9" value="' + (parseFloat(image.prob).toFixed(4)) + '"></meter>'+
-                            '<span> '+ (parseFloat(image.prob).toFixed(4)) + '</span>' +
-                        '</div>'+
-                    '</div>'+
-                '</div>'
+    var generate_image_html_string = function(image, collection) {
+        var root_path = window.location.href.toString().split(window.location.host.toString())[1].replace('/web-demo/index.html','')
+
+        res = '<div class="col-sm-2 col-lg-2 col-md-2">' +
+            '<div class="thumbnail">' +
+            '<img class="lazy" data-original="'+root_path+'/collections/' + collection + '/JPG/images/' + image.name + '" alt="">' +
+            '<div class="caption">' +
+            '<meter style="100px" max="1" low="0" high="0.75" optimum="0.9" value="' + (parseFloat(image.prob).toFixed(4)) + '"></meter>' +
+            '<span> ' + (parseFloat(image.prob).toFixed(4)) + '</span>' +
+            '</div>' +
+            '</div>' +
+            '</div>'
         return res
     }
 
@@ -162,16 +184,20 @@ $(document).ready(function() {
         $error.parent().addClass("hidden")
 
         var url = '/search?' + 'collection=' + collection + '&list=' + u_list + '&dataset=' + dataset + '&category=' + category + '&binaryfile=' + binaryfile
-        console.log(url)
+        
         $.ajax({
-            url: url,
-            type: "GET",
+            url: "middleman.php",
+            type: "POST",
+            data: {
+                type: 1,
+                params: collection +','+ u_list +','+ dataset +','+ category +','+binaryfile
+            },
             success: function(data) {
                 data = JSON.parse(data)
                 $image_res.empty()
                 // generate images elements
                 var html_string = ''
-                for(var i = 0, len = data.length; i < len; i++){
+                for (var i = 0, len = data.length; i < len; i++) {
                     html_string += generate_image_html_string(data[i], collection)
                 }
                 $image_res.append(html_string)
@@ -183,17 +209,23 @@ $(document).ready(function() {
     })
 
     $.ajax({
-        url: "/collections",
-        type: "GET",
+        url: "middleman.php",
+        type: "POST",
+        data: {
+            type: 0,
+            func: 0,
+            params: ''
+        },
         success: function(data) {
             data = JSON.parse(data)
             var temp = []
             for (var i = 0; i < data.length; i++) {
                 temp.push({ id: data[i], text: data[i] })
             }
-
             init_select_collection(temp)
         },
     });
+
+    
 
 });
