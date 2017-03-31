@@ -136,7 +136,7 @@ $(document).ready(function() {
     }
 
     var generate_image_html_string = function(image, collection) {
-        var root_path = window.location.href.toString().split(window.location.host.toString())[1].replace('/web-demo/index.html','')
+        var root_path = window.location.href.toString().split(window.location.host.toString())[1].replace('/web/index.html','')
 
         res = '<div class="col-sm-2 col-lg-2 col-md-2">' +
             '<div class="thumbnail">' +
