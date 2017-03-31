@@ -64,24 +64,9 @@ def get_binaryfile(collection, dataset):
     if(not os.path.isdir(binaryfile_folder)):
         print json.dumps([])
 
-    for net_foldername in os.listdir(binaryfile_folder):
-        if(os.path.isdir(binaryfile_folder + '/' + net_foldername)):
-            temp_group = {"text": net_foldername,"elment": "HTMLOptGroupElement"}
-            chidren_array = []
-            for name in os.listdir(binaryfile_folder + '/' + net_foldername):
-                if(os.path.isdir(binaryfile_folder + '/' + net_foldername + '/' + name)):
-                    for root, dirs, files in os.walk(binaryfile_folder + '/' + net_foldername + '/' + name):
-                        for file in files:
-                            if file.endswith('.bin'):
-                                filename = root.replace(binaryfile_folder + '/' + net_foldername + '/', '') + '/' + file
-                                chidren_array.append({"id": filename, "text": filename, "element": "HTMLOptionElement"})
-                else:
-                    if name.endswith('.bin'):
-                        chidren_array.append({"id": net_foldername + '/' + name, "text": name, "element": "HTMLOptionElement"})
-
-        temp_group["children"] = chidren_array
-        res.append(temp_group)
-
+    for filename in os.listdir(binaryfile_folder):
+        if(os.path.isfile(binaryfile_folder + '/' + filename) and filename.endswith('.bin')):
+            res.append({"id": filename, "text": filename})
     print json.dumps(res)
 
 def main(argv):
