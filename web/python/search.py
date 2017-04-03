@@ -71,7 +71,7 @@ def sort_image_with_sublist(category, path_to_keyfile, path_to_list_image_file, 
     prob_image_list_values = np.asarray(prob_image_list_values) 
     argsort = prob_image_list_values.argsort()[::-1]
     for i in range(0, len(argsort)):
-        res.append({"name": image_list_name[argsort[i]], "prob": str(prob_image_list_values[argsort[i]])})
+        res.append({"id": str(keylist_dict[image_list_name[argsort[i]]]),"name": image_list_name[argsort[i]], "prob": str(prob_image_list_values[argsort[i]])})
     
     return res
 
@@ -86,27 +86,28 @@ def sort_image_without_sublist(category, path_to_keyfile, path_to_bynaryfile, pa
 
     categories = read_categories(f_categoryfile)
 
-    image_list = []
-    line = f_keyfile.readline().replace('\n', '')
-    while line:
-        image_list.append(line)
-        line = f_keyfile.readline().replace('\n', '')
-
-    # read probabilities values for category selected that coressponse with each images
     number_of_category = len(categories)
     size_of_float = 4
-    number_byte_each_image = number_of_category*size_of_float
     prob_image_list_values = []
-    buff_image_probs = f_binaryfile.read(number_byte_each_image)
-    while buff_image_probs:
-        float_array = np.frombuffer(buff_image_probs, dtype='<f', count = -1, offset = 0)
-        prob_image_list_values.append(float_array[category])
-        buff_image_probs = f_binaryfile.read(number_byte_each_image)
+
+    image_name_list = []
+    line = f_keyfile.readline().replace('\n', '')
+    image_position = 0
+    while line:
+        offset = (number_of_category*image_position + category)*4
+        f_binaryfile.seek(offset)
+        temp = f_binaryfile.read(4)
+        prob_image_list_values.append(struct.unpack('<f', temp)[0])
+                
+        image_name_list.append(line)
+
+        image_position += 1
+        line = f_keyfile.readline().replace('\n', '')
     
     prob_image_list_values = np.asarray(prob_image_list_values) 
     argsort = prob_image_list_values.argsort()[::-1]
     for i in range(0, len(argsort)):
-        res.append({"name": image_list[argsort[i]], "prob": str(prob_image_list_values[argsort[i]])})
+        res.append({"id":str(argsort[i]), "name": image_name_list[argsort[i]], "prob": str(prob_image_list_values[argsort[i]])})
     
     return res
 

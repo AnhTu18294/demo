@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="css/default.css" />
     <link rel="stylesheet" type="text/css" href="css/select2.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/jqpagination.css" />
     <script type="text/javascript" src="js/jquery.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/select2.min.js"></script>
@@ -13,8 +14,8 @@
     <script type="text/javascript" src="js/placeholders.min.js"></script>
     <script type="text/javascript" src="js/jquery.lazyload.js"></script>
     <script type="text/javascript" src="js/jquery.scrollstop.js"></script>
+    <script type="text/javascript" src="js/jquery.jqpagination.min.js"></script>
 </head>
-
 
 <body>
     <!-- Navigation -->
@@ -59,25 +60,29 @@
                     <select class="form-control" id="select-collection" style="width: 90%">
                         <option></option>
                     </select>
-                    <br><br>
+                    <br>
+                    <br>
                     <label for="sel1">Lists:</label>
                     <br>
                     <select class="form-control" id="select-list" style="width: 90%">
                         <option></option>
                     </select>
-                    <br><br>
+                    <br>
+                    <br>
                     <label for="sel1">Datasets:</label>
                     <br>
                     <select class="form-control" id="select-dataset" style="width: 90%">
                         <option></option>
                     </select>
-                    <br><br>
+                    <br>
+                    <br>
                     <label for="sel1">Categories:</label>
                     <br>
                     <select class="form-control" id="select-category" style="width: 90%">
                         <option></option>
                     </select>
-                    <br><br>
+                    <br>
+                    <br>
                     <label for="sel1">Binary files:</label>
                     <br>
                     <select class="form-control" id="select-binary-file" style="width: 90%">
@@ -86,16 +91,52 @@
                     <br>
                     <br>
                     <br>
-                    <button type="button" class="btn btn-primary" id="search-btn">Search...</button>
-                    <button type="button" class="btn btn-default pull-right" id="search-btn">Refresh</button>
+                    <button type="button" class="btn btn-primary text-center" id="search-btn">Search...</button>
                 </div>
                 <div class="error hidden">
                     <label>Error: </label>
                     <ul id="error"></ul>
-                </div>                    
+                </div>
             </div>
             <div class="col-md-10" style="background-color: #DCDCDC;">
                 <div class="row" id="image-res">
+                </div>
+                
+                <div class="pagination pull-right hidden">
+                    <a href="#" class="first" data-action="first">&laquo;</a>
+                    <a href="#" class="previous" data-action="previous">&lsaquo;</a>
+                    <input type="text" readonly="readonly" data-max-page="40" />
+                    <a href="#" class="next" data-action="next">&rsaquo;</a>
+                    <a href="#" class="last" data-action="last">&raquo;</a>
+                </div>
+
+            </div>
+        </div>
+        <!-- modal -->
+        <div class="modal fade" id="detail" role="image">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="row modal-body">
+                        <div class="col-sm-8 col-lg-8 col-md-8">
+                            <img id="full-image" class="img-responsive" alt="" width="100%" height="100%">
+                        </div>
+                        <div class="col-sm-4 col-lg-4 col-md-4">
+                            <table class="table table-fixed">
+                                <thead>
+                                    <tr>
+                                        <th class="col-xs-8">Categories</th>
+                                        <th class="col-xs-4">Probability</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="prob-list">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -103,4 +144,3 @@
 </body>
 
 </html>
-
